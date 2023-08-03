@@ -42,6 +42,8 @@ module.exports = (req, res, next) => {
 
       req.user = user;
 
+      req.session.save();
+
       next();
     })
     .catch((error) => {

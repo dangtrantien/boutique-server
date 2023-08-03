@@ -124,6 +124,8 @@ exports.postSignin = async (req, res, next) => {
 
     req.session.token = token;
 
+    req.session.save((err) => console.log(err));
+
     res
       .status(200)
       .json({ message: 'Successfully signin!', token: token, user: user });
