@@ -1,3 +1,3 @@
 # Link Deploy
 
-This project was deploy here: [https://booking-server-6rik.onrender.com](https://booking-server-6rik.onrender.com)
+This project was deploy here: [https://boutique-server.onrender.com](https://boutique-server.onrender.com)
