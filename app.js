@@ -49,6 +49,8 @@ const fileFilter = function (req, file, cb) {
   }
 };
 
+app.set('trust proxy', 1);
+
 app.use(compression());
 app.use(bodyParser.json());
 app.use(
