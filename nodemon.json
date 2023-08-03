@@ -1,0 +1,7 @@
+{
+  "env": {
+    "MONGO_USER": "tiendtfx22706",
+    "MONGO_PASSWORD": "alive%3Fdead",
+    "MONGO_DEFAULT_DATABASE": "shop"
+  }
+}
