@@ -3,19 +3,36 @@
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
-const paging = require('../util/paging');
 const fileHelper = require('../util/file');
 
 // ==================================================
 
 // Lấy data của tất cả user
 exports.getUsers = async (req, res, next) => {
+  const page = req.query.page;
+  const limit = req.query.limit;
+  let skip;
+
+  if (page) {
+    skip = (page - 1) * limit;
+  }
+
   try {
-    const users = await User.find().populate('cart.items.product');
+    const users = await User.find()
+      .populate('cart.items.product')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-    const result = paging(users);
+    if (users.length === 0) {
+      const error = new Error("There's no more user!");
 
-    res.status(200).json(result);
+      error.statusCode = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(users);
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -76,12 +93,29 @@ exports.getEarnings = async (req, res, next) => {
 
 // Lấy data của tất cả order
 exports.getOrders = async (req, res, next) => {
+  const page = req.query.page;
+  const limit = req.query.limit;
+  let skip;
+
+  if (page) {
+    skip = (page - 1) * limit;
+  }
+
   try {
-    const orders = await Order.find();
+    const orders = await Order.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-    const result = paging(orders);
+    if (orders.length === 0) {
+      const error = new Error("There's no more order!");
 
-    res.status(200).json(result);
+      error.statusCode = 404;
+
+      throw error;
+    }
+
+    res.status(200).json(orders);
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -94,20 +128,12 @@ exports.getOrders = async (req, res, next) => {
 // Lấy 9 order gần nhất
 exports.getRecentOrders = async (req, res, next) => {
   try {
-    const recentList = [];
+    const orders = await Order.find()
+      .populate('user')
+      .limit(9)
+      .sort({ createdAt: -1 });
 
-    const orders = await Order.find().populate('user');
-
-    // Sắp xếp theo thời gian khởi tạo giảm dần
-    const sortedList = orders.sort((a, b) => b.createdAt - a.createdAt);
-
-    for (let i = 0; i < 9; i++) {
-      if (sortedList[i]) {
-        recentList.push(sortedList[i]);
-      }
-    }
-
-    res.status(200).json(recentList);
+    res.status(200).json(orders);
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -120,15 +146,23 @@ exports.getRecentOrders = async (req, res, next) => {
 // Lấy product data theo keyword === name
 exports.getSearchProductByName = async (req, res, next) => {
   const keyword = req.query.keyword;
+  const page = req.query.page;
+  const limit = req.query.limit;
+  let skip;
+
+  if (page) {
+    skip = (page - 1) * limit;
+  }
 
   try {
     const products = await Product.find({
       name: { $regex: keyword.toString(), $options: 'i' },
-    });
+    })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
-    const result = paging(products);
-
-    res.status(200).json(result);
+    res.status(200).json(products);
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
