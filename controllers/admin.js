@@ -11,28 +11,17 @@ const fileHelper = require('../util/file');
 exports.getUsers = async (req, res, next) => {
   const page = req.query.page;
   const limit = req.query.limit;
-  let skip;
-
-  if (page) {
-    skip = (page - 1) * limit;
-  }
 
   try {
     const users = await User.find()
       .populate('cart.items.product')
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    if (users.length === 0) {
-      const error = new Error("There's no more user!");
+    const totalUser = await User.count();
 
-      error.statusCode = 404;
-
-      throw error;
-    }
-
-    res.status(200).json(users);
+    res.status(200).json({ data: users, total: totalUser });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -95,27 +84,16 @@ exports.getEarnings = async (req, res, next) => {
 exports.getOrders = async (req, res, next) => {
   const page = req.query.page;
   const limit = req.query.limit;
-  let skip;
-
-  if (page) {
-    skip = (page - 1) * limit;
-  }
 
   try {
     const orders = await Order.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    if (orders.length === 0) {
-      const error = new Error("There's no more order!");
+    const totalOrder = await Order.count();
 
-      error.statusCode = 404;
-
-      throw error;
-    }
-
-    res.status(200).json(orders);
+    res.status(200).json({ data: orders, total: totalOrder });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -125,13 +103,13 @@ exports.getOrders = async (req, res, next) => {
   }
 };
 
-// Lấy 9 order gần nhất
+// Lấy 8 order gần nhất
 exports.getRecentOrders = async (req, res, next) => {
   try {
     const orders = await Order.find()
       .populate('user')
-      .limit(9)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .limit(8);
 
     res.status(200).json(orders);
   } catch (error) {
@@ -148,21 +126,20 @@ exports.getSearchProductByName = async (req, res, next) => {
   const keyword = req.query.keyword;
   const page = req.query.page;
   const limit = req.query.limit;
-  let skip;
-
-  if (page) {
-    skip = (page - 1) * limit;
-  }
 
   try {
     const products = await Product.find({
       name: { $regex: keyword.toString(), $options: 'i' },
     })
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    res.status(200).json(products);
+    const totalProduct = await Product.find({
+      name: { $regex: keyword.toString(), $options: 'i' },
+    }).count();
+
+    res.status(200).json({ data: products, total: totalProduct });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

@@ -4,7 +4,6 @@ const nodemailer = require('nodemailer');
 
 const Product = require('../models/Product');
 const Order = require('../models/Order');
-const paging = require('../util/paging');
 
 // ==================================================
 
@@ -18,12 +17,18 @@ const transporter = nodemailer.createTransport({
 
 // Lấy tất cả product
 exports.getProducts = async (req, res, next) => {
+  const page = req.query.page;
+  const limit = req.query.limit;
+
   try {
-    const products = await Product.find();
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    const result = paging(products);
+    const totalProduct = await Product.count();
 
-    res.status(200).json(result);
+    res.status(200).json({ data: products, total: totalProduct });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -60,17 +65,18 @@ exports.getTopTrendingProducts = async (req, res, next) => {
 // Lấy product theo category
 exports.getProductsByCategory = async (req, res, next) => {
   const category = req.query.category;
+  const page = req.query.page;
+  const limit = req.query.limit;
 
   try {
-    const products = await Product.find({ category: category });
+    const products = await Product.find({ category: category })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    if (products.length === 0) {
-      return res.status(200).json({ total: 0, result: [] });
-    }
+    const totalProduct = await Product.find({ category: category }).count();
 
-    const result = paging(products);
-
-    res.status(200).json(result);
+    res.status(200).json({ data: products, total: totalProduct });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
