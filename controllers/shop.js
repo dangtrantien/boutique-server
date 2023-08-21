@@ -41,18 +41,9 @@ exports.getProducts = async (req, res, next) => {
 // Lấy 8 product bán chạy nhất
 exports.getTopTrendingProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ totalSaled: -1 }).limit(8);
 
-    // Sắp xếp theo totalSaled giảm dần
-    const sortedProducts = products.sort((a, b) => b.totalSaled - a.totalSaled);
-
-    const topTrendingProducts = [];
-
-    for (let i = 0; i < 8; i++) {
-      topTrendingProducts.push(sortedProducts[i]);
-    }
-
-    res.status(200).json(topTrendingProducts);
+    res.status(200).json(products);
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
