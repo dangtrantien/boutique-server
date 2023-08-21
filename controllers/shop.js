@@ -159,7 +159,9 @@ exports.deleteCartItem = async (req, res, next) => {
 // Lấy các order của current user
 exports.getUserOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json(orders);
   } catch (error) {
