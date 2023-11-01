@@ -1,7 +1,9 @@
 {
   "env": {
+    "PORT": 5000,
     "MONGO_USER": "tiendtfx22706",
     "MONGO_PASSWORD": "alive%3Fdead",
-    "MONGO_DEFAULT_DATABASE": "shop"
+    "MONGO__DATABASE": "assignment-03.y6zbann",
+    "MONGO_DEFAULT_COLLECTION": "shop"
   }
 }

@@ -17,7 +17,7 @@ const authRoutes = require('./routes/auth');
 
 // ==================================================
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@assignment-03.y6zbann.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DEFAULT_DATABASE}.mongodb.net/${process.env.MONGO_DEFAULT_COLLECTION}`;
 
 const app = express();
 // Lưu cookie của current user vào MongoDB
@@ -86,6 +86,9 @@ app.use(
   })
 );
 
+app.get('/', (req, res, next) => {
+  res.send('<h1>Welcome to my server!</h1>');
+});
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -101,7 +104,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    const server = app.listen(process.env.PORT || 5000);
+    const server = app.listen(process.env.PORT);
 
     const io = require('./util/socket').init(server);
 
