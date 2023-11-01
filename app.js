@@ -17,7 +17,7 @@ const authRoutes = require('./routes/auth');
 
 // ==================================================
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DEFAULT_DATABASE}.mongodb.net/${process.env.MONGO_DEFAULT_COLLECTION}`;
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DATABASE}.mongodb.net/${process.env.MONGO_DEFAULT_COLLECTION}`;
 
 const app = express();
 // Lưu cookie của current user vào MongoDB
