@@ -1,6 +1,6 @@
 ## Link Deploy
 
-This project was deploy here: [https://boutique-server.onrender.com](https://boutique-server.onrender.com)
+This project was deploy here: [https://boutique-server-dangtrantien.vercel.app](https://boutique-server-dangtrantien.vercel.app)
 
 ### This project has following structures:
 
