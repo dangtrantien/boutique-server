@@ -56,8 +56,6 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: [
-      // 'http://192.168.1.107:3000',
-      // 'http://192.168.1.107:3001',
       'https://boutique-client.onrender.com',
       'https://boutique-admin.onrender.com',
     ],
